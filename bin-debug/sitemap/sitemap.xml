@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.0">
+  <url> 
+    <loc>http://youtubebusinesssolutions.com/index.cfm/p/1/dealership.html</loc> 
+  </url>
+  <url>
+  	<loc>http://youtubebusinesssolutions.com/index.cfm/p/3/blog.html</loc>
+  </url>	
+  <url>
+  	<loc>http://youtubebusinesssolutions.com/index.cfm/p/2/carbuys.html</loc>
+  </url>	
+ 	
+ </urlset>

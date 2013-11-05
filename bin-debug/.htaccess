@@ -1,0 +1,6 @@
+order deny,allow
+deny from 123.123.123.123
+allow from all
+
+DirectoryIndex index.cfm
+

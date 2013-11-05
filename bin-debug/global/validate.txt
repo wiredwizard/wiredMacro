@@ -1,0 +1,157 @@
+validate.js
+
+********************** ********************** **********************   
+********************** Example ********************** 
+********************** ********************** ********************** 
+
+Required field:Alphanumeric field:Password:Password Confirmation (match password):Email:Min length field (min. 8 chars):Required checkbox (example: Terms of Service)Submit
+Features
+
+Validate form fields from over a dozen rules
+No dependencies
+Customizable messages
+Supply your own validation callbacks for custom rules
+Chainable customization methods for ease of declaration
+Works in all major browsers (even IE6!)
+Modeled off the CodeIgniter form validation API
+Installation and Usage
+
+Include the JavaScript file in your source
+
+<script type="text/javascript" src="validate.min.js"></script>
+Create the validation object with your desired rules. This needs to be in a <script> tag located just before your closing </body> tag. The reason for this being that the DOM needs to have your form loaded before you can attach your rules.
+
+var validator = new FormValidator('example_form', [{
+    name: 'req',
+    display: 'required',    
+    rules: 'required'
+}, {
+    name: 'alphanumeric',
+    rules: 'alpha_numeric'
+}, {
+    name: 'password',
+    rules: 'required'
+}, {
+    name: 'password_confirm',
+    display: 'password confirmation',
+    rules: 'required|matches[password]'
+}, {
+    name: 'email',
+    rules: 'valid_email'
+}, {
+    name: 'minlength',
+    display: 'min length',
+    rules: 'min_length[8]'
+}], function(errors, event) {
+    if (errors.length > 0) {
+        // Show the errors
+    }
+});
+
+********************** ********************** ********************** 
+********************** FormValidatornew FormValidator(formName, fields, callback)********************** 
+********************** ********************** ********************** 
+
+The FormValidator object is attached to the window upon loading validate.js. After creation, it will validate the fields on submission of the form named formName.
+
+The formName passed in to validate must be the exact value of the name attribute of the form
+
+<form name="example_form"></form>
+An array of fields will be used to perform validation on submission of the form. The array must contain objects containing three properties:
+
+name (required) - The name attribute of the element.
+
+<input name="email" />
+display (optional) - The name of the field as it appears in error messages. If not present in the object, the name parameter will be used.
+
+Example: If your field name is user, you may choose to use a display of "Username."
+
+rules (required) - One or more rules, which are piped together.
+
+Example - required|min_length[8]|matches[password_confirm]
+
+A callback will always be executed after validation. Your callback should be ready to accept two parameters.
+
+errors - An array of errors from the validation object. If the length > 0, the form failed validation
+
+This array will contain javascript objects with up to three properties:
+- id: The id attribute of the form element
+- name: The name attribute of the form element
+- message: The error message to display
+- rule: The rule that prompted this error
+
+event - If the browser supports it, the onsubmit event is passed in.
+function(errors, event) {
+    if (errors.length > 0) {
+        var errorString = '';
+        
+        for (var i = 0, errorLength = errors.length; i < errorLength; i++) {
+            errorString += errors[i].message + '<br />';
+        }
+        
+        el.innerHTML = errorString;
+    }       
+}        
+
+********************** ********************** **********************         
+********************** Custom Validation Rules********************** 
+********************** ********************** ********************** 
+
+validate.js supports the ability for you to include your own validation rules. This will allow you to extend validate.js to suit your needs. A common example of this would be checking if an email is unique.
+
+First, you need to add another rule to the field. It must always be prefaced with "callback_"
+
+rules: 'required|callback_check_email'
+Then you must call registerCallback on your instance of the FormValidator with the name of your custom rule and a function taking one parameter. This function will be called with one argument, the value of the field. If the value passes your custom validation, return true, otherwise return false. You can set a message for this rule using the setMessage method as described below.
+
+validator.registerCallback('check_email', function(value) {
+    if (emailIsUnique(value)) {
+        return true;
+    }
+    
+    return false;
+})
+.setMessage('check_email', 'That email is already taken. Please choose another.');
+Available Methods
+
+setMessagevalidator.setMessage(rule, message)
+All of the default error messages are located at the top of validate.js in a defaults object. If you wish to change a message application wide, you should do so in the source code. If you would like to change a message for a form, use this method on your instance of the FormValidator object. When setting a new message, you should pass in %s, which will be replaced with the display parameter from the fields array
+
+validator.setMessage('required', 'You must fill out the %s field.');
+registerCallbackvalidator.registerCallback(rule, callback)
+Used to pair a custom rule in the fields array with a callback to be executed upon validation.
+
+validator.registerCallback('check_email', function(value) {
+    if (emailIsUnique(value)) {
+        return true;
+    }
+    
+    return false;
+});
+
+********************** ********************** ********************** 
+********************** Available Rules ********************** 
+********************** ********************** ********************** 
+Rule	Description	Parameter	Example
+required	returns false if the form element is empty.	no	
+matches	returns false if the form element value does not match the one in the parameter.	yes	matches[other_element]
+valid_email	returns false if the form element value is not a valid email address.	no	
+valid_emails	returns false if any value provided in a comma separated list is not a valid email.	no	
+min_length	returns false if the form element value is shorter than the parameter.	yes	min_length[6]
+max_length	returns false if the form element value is longer than the parameter.	yes	max_length[8]
+exact_length	returns false if the form element value length is not exactly the parameter.	yes	exact_length[4]
+greater_than	returns false if the form element value is less than the parameter after using parseFloat.	yes	greater_than[10]
+less_than	returns false if the form element value is greater than the parameter after using parseFloat.	yes	less_than[2]
+alpha	returns false if the form element contains anything other than alphabetical characters.	no	
+alpha_numeric	returns false if the form element contains anything other than alpha-numeric characters.	no	
+alpha_dash	returns false if the form element contains anything other than alphanumeric characters, underscores, or dashes.	no	
+numeric	returns false if the form element contains anything other than numeric characters.	no	
+integer	returns false if the form element contains anything other than an integer.	no	
+decimal	returns false if the form element contains anything other than a decimal.	no	
+is_natural	returns false if the form element contains anything other than a natural number: 0, 1, 2, 3, etc.	no	
+is_natural_no_zero	returns false if the form element contains anything other than a natural number, but not zero: 1, 2, 3, etc.	no	
+valid_ip	returns false if the supplied IP is not valid.	no	
+valid_base64	returns false if the supplied string contains anything other than valid Base64 characters.	no	
+valid_credit_card	returns false if the supplied string is not a valid credit card	no	
+valid_url	returns false if the supplied string is not a valid url	no	
+is_file_type	returns false if the supplied file is not part of the comma separated list in the paramter	yes	is_file_type[gif,png,jpg]
